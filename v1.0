@@ -1,0 +1,44 @@
+'''
+Author:Kyle Song
+Date: 5/26/2017
+Note: Replace the url under the spider function with:
+        http://imagebank.org.uk/?tbs=multi&folders=o&max=48&view=1
+        http://www.zerochan.net/Library
+'''
+
+import requests
+import urllib.request
+import os
+from bs4 import BeautifulSoup
+ 
+
+def spider(max_pages):
+    page = 1
+    while page <= max_pages:
+        url = 'https://www.pinterest.com/pin/301248662565600260/' #+ str(page)
+        source_code = requests.get(url)
+        plain_text = source_code.text
+        soup = BeautifulSoup(plain_text)
+        for link in soup.findAll('img',):
+            href = link.get('src')
+            if href == None:
+                print('find nothing')
+                break
+            else:
+                save_image(url,href)
+        page += 1
+ 
+def save_image(fullurl,url):
+    print(fullurl,"   ",url)
+    print(url.find('http')==-1 and url.find('www')==-1)
+    print('->',url)
+    if url.find('http')==-1 and url.find('www')==-1:                #if = -1 (not find)
+        url = fullurl+url
+        print('-<',url)
+    source_code = requests.get(url)
+    pathFileName = os.path.join('I:\PythonProject\ProjectTwo\outPut',url[-9:-3]+'.png')
+    urllib.request.urlretrieve(url,pathFileName)
+    
+spider(1) #max page
+ 
+ 
